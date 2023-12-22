@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>カエルエディタ</title>
+    <title>カエルエディタ</title><script>const version="231222"</script>
     <meta name="description" content="frog editor">
     <link rel="icon" id="fav" href="">
 </head>
@@ -448,6 +448,12 @@ const ChipTitle = {//各文字の説明
     "~":"ベロポイント",
     "?":"みえないブロック"
 };
+const EventHelp = {
+    "a":"表示する文字列を入力",
+    "b":"移動先ステージファイルを相対パスで指定",
+    "c":"移動量[マス]を半角数字で入力",
+    "d":"移動量[マス]を半角数字で入力"
+};
 const ChipEventIndex = 12;
 function mapPallet(){//マップパレット表示
     //デフォチップ表示
@@ -503,12 +509,6 @@ function removeMapEvent(){//イベント削除
     mapInfo.events.length = mapEventSize;
     mapEventInfo();
 }
-const EventHelp = {
-    "a":"表示する文字列を入力",
-    "b":"移動先ステージファイルを相対パスで指定",
-    "c":"移動量[マス]を半角数字で入力",
-    "d":"移動量[マス]を半角数字で入力"
-};
 function mapEventInfo(){//イベント情報表示
     var str = "";
     for(var i = 0; i < mapEventSize; i++){
@@ -570,19 +570,23 @@ function infoBoard(td){//右側表示切替
 const helpInfo = "<b>～つかいかた～</b>"+
 "<ul><li>最初に「ステージ固有チップ」に画像を読み込む</li><li>チップをクリックすると描画チップが変わる</li><li>「生成」をクリックすると「ステージデータ」にデータがテキストとして出力される</li><li>コピーしてテキストファイルとして保存する</li><li>読み込むときは、「ステージデータ」にテキストを張り付けて「読込」をクリック</li><li>ステージ上では左クリックで描画、右クリックでスポイト</li></ul>"+
 "<b>～カエルはカエる'簡単な仕様～</b><br>"+
-"<ul><li>飛び越えられる高さ：２マス(ダッシュ時３マス)</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
-"<b>～このエディタの仕様～</b><ul><li>Chrome前提だから他の環境で動くかわからない</li><li>「Undo」「Redo」的なものは一切ない</li><li>背景画像とチップ画像は「ステージ」欄での指定とは別に読み込む必要がある</li><li>ステージに対応するチップを読み込まないと「undefined」で埋め尽くされる(読み込むとなおる)</li><li>表示が変なのは技術不足</li></ul>"+
+"<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
+"<b>～このエディタの仕様～</b><ul><li>Chrome前提だから他の環境で動くかわからない</li><li>「Undo」「Redo」的なものは一切ない</li><li>背景画像とチップ画像は「ステージ」欄での指定とは別に読み込む必要がある</li><li>ステージに対応するチップを読み込まないと「undefined」で埋め尽くされる(読み込むとなおる)</li><li>画像は"+TileSize+"px毎に分割される</li><li>表示が変なのは技術不足</li></ul>"+
 "<b>～できるだけ不具合を回避したい！～</b><ul><li>なによりも最初に「ステージ固有チップ」に画像を読み込む</li><li>触れて起動するイベントは最低１マス間をあける</li></ul>"+
 "<b>～ちょっとしたツール～</b><br>無印→ダッシュ変換 (#map部のみ！) <input type='button' onclick='txtShort()' style='width:3em;' value='変換'><br>"+
-"<textarea id='chottoShort' style='height:7em'></textarea>"+
-"231220-0x41n";
+"<textarea id='chottoShort' style='height:7em'></textarea><br><br>"+
+"ウディタマップ読込 (.mps形式)<br><input type='file' onchange='filein(this)'><br>"+
+"読み込むレイヤー <input type='number' id='wolfL' min='1' max='3' step='1' value='1' onchange='setrange(1)' style='width:3em'> "+
+"<input type='button' onclick='mps2txt()' value='読込' style='width:3em;'><br>"+
+"<textarea id='wolfT' style='height:7em'></textarea>"+
+version + "-0x41n";
 const scrollTypeSelect = "<select id='stageScr'>"+
 "<option value='0'>固定</option><option value='1'>横スクロール</option><option value='2'>縦スクロール</option><option value='3'>縦横スクロール</option><option value='4'>右強制スクロール</option><option value='6'>右強制＋縦スクロール</option><option value='8'>上強制スクロール(未実装)</option><option value='9'>上強制＋横スクロール(未実装)</option>"+
 "</select>";
 const backScrollTypeSelect = "<select id='stageBackScr'>"+
 "<option value='-5'>1フレームごとに5px</option><option value='-4'>1フレームごとに4px</option><option value='-3'>1フレームごとに3px</option><option value='-2'>1フレームごとに2px</option><option value='-1'>1フレームごとに1px</option>"+
 "<option value='0'>動かない</option><option value='1'>カメラ1pxにつき1px</option><option value='2'>カメラ2pxにつき1px</option><option value='3'>カメラ3pxにつき1px</option><option value='4'>カメラ4pxにつき1px</option><option value='5'>カメラ5pxにつき1px</option></select>";
-const chipTypeSelect = "<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option>"+
+const chipTypeSelect = "<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option><option value='4'>4:坂(／)</option><option value='5'>5:坂(＼)</option>"+
 "</select>";
 const stageInfo = "タイトル<br><input type='text' id='stageName' placeholder='英数/かな/カナ で入力'><br>"+
 "ステージ横マス<br><input type='number' id='stageSizeX' step='1' min='10' onchange='setrange(10)'><br>"+
@@ -591,7 +595,7 @@ const stageInfo = "タイトル<br><input type='text' id='stageName' placeholder
 "背景画像<br><input type='text' id='stageBack' placeholder='相対パスで指定'><br>"+
 "スクロール<br>"+scrollTypeSelect+"<br>"+
 "背景スクロール速度(横のみ)<br>"+backScrollTypeSelect+"<br>"+
-"主人公レイヤー<br><select id='stageLayor'><option value='0'>マップより下</option><option value='1'>マップより上</option></select><br>"+
+"主人公レイヤー<br><select id='stageLayor'><option value='0'>マップの後ろに表示</option><option value='1'>マップの前に表示</option></select><br>"+
 "shobo<br><input type='text' id='stageOgc' placeholder='相対パスで指定 or 半角数字でID指定 (-1でBGM継続)'><br>"+
 "ステージデータ<table><tr><td onclick='map2txt()'>生成</td><td onclick='txt2map()'>読込</td></tr></table>"+
 "<textarea id='stageData' style='height:7em'></textarea>";
@@ -629,6 +633,8 @@ window.addEventListener("resize", function(event) {//ウィンドウリサイズ
 mapPallet();
 eventPallet();
 
+
+//以下おまけツール
 function txtShort(){//マップを短くするやつ
     var str = chottoShort.value.replace(/\n/g,"") + "終";
     str = str.replace(/S/g,"$").replace(/G/g,"&").replace(/P/g,"+").replace(/D/g,"*").replace(/B/g,"=").replace(/K/g,"^").replace(/Q/g,"~");
@@ -649,7 +655,53 @@ function txtShort(){//マップを短くするやつ
     }
     chottoShort.value = txt;
 }
-
+function filein(ev){//バイナリファイル読み込み
+    var reader = new FileReader();
+    var file = ev.files[0];
+    reader.onload = function(){
+        var dataview = new DataView(reader.result);
+        getMpsInfo(dataview);
+    }
+    reader.readAsArrayBuffer(file);
+}
+var mpsData = [[],[],[],[]];
+function getMpsInfo(dv){//ウディタのマップ情報読取
+    if(dv.getUint32(0)!=0||dv.getUint8(9)!=0||dv.getUint32(10)!=0x574F4C46||dv.getUint8(14)!=0x4D){
+        wolfT.value="ウディタのマップとして読み込めませんでした…";
+        return;
+    }
+    var start = dv.getUint32(0x19,true);//謎の可変長データ。0x19~0x1Cはたぶんサイズ。
+    var mpsSizeX = dv.getUint32(0x21+start,true);
+    var mpsSizeY = dv.getUint32(0x25+start,true);
+    mpsData[0] = [mpsSizeX,mpsSizeY];
+    var mps = mpsSizeX * mpsSizeY;
+    start += 0x2D;//マップデータの始まり
+    var mpsChip;
+    for(var layor = 0; layor < 3; layor++){
+        for(var i = 0; i < mps; i++){
+            mpsChip = dv.getUint32((i+layor*mps)*4+start,true) < 100000 ? dv.getUint32((i+layor*mps)*4+start,true)+1 : ".";
+            mpsData[layor+1][i] = mpsChip;
+        }
+    }
+    wolfT.value="「読込」をクリックすると\n指定したレイヤーのマップを\nカエルはカエる'用に変換します。\n(オートタイルは空欄として扱われます。)";
+}
+function mps2txt(){
+    var index = wolfL.value > 3 ? 3 : wolfL.value;
+    var arr = mpsData[index].concat();arr.push("終");
+    var chr = arr[0];
+    var cnt=0,txt="";
+    for(var i = 0; i < arr.length; i++){
+        if(chr!=arr[i]){
+            txt += cnt == 1 ? chr + "|" : chr + "[" + cnt + "]";
+            chr = arr[i];
+            cnt = 1;
+        }else{
+            cnt += 1;
+        }
+    }
+    wolfT.value = "#set\nウテ゛ィタマッフ゜|"+mpsData[0][0]+"|"+mpsData[0][1]+"||3|1|0|0\n#map\n"
+    +txt+"\n#chip\n\n#event\n\n#replay";
+}
 //ファビコン設定
 const Favicon = "data:image/png;base64,"+
 "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAMFBMVEUuKRdmZlSjo4/MzLBBPF8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEhoZ4AAAABXRSTlP/////APu2DlMAAAERSURBVHic7dixDcMwDARAr5BZvIL3nylVGgIEKcSBKeS+pvhXCjyuIkeS2+YBAAAAAAAAxgI+D88kWVE1DwAAAAAAALAvIBa9klRAAAAAAAAAgPmAWHAmqQAxAAAAAAAAAPMBsfhXiRAAAAAAAACA/wNECAAAAAAAAMDzgG+LVw8YAAAAAAAAAPsCsqJuYl/8CAEAAAAAAAA8B1g9UMTF1XxWDAAAAAAAADAP0IVEQBcEAAAAAAAAsD+gKq4gAAAAAAAAAPMBWfFdgAwCAAAAAAAAsA+gC6neAwAAAAAAAMwHdCGrifsBAAAAAAAA5gC6hXFBleV9AAAAAAAAAI8Bsg9JzLWY7j4AAAAAAACAxwFvDGTx0xdFeQ8AAAAASUVORK5CYII=";
