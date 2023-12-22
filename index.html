@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>カエルエディタ</title><script>const version="231222"</script>
+    <title>カエルエディタ</title><script>const version="231222b"</script>
     <meta name="description" content="frog editor">
     <link rel="icon" id="fav" href="">
 </head>
@@ -664,30 +664,39 @@ function filein(ev){//バイナリファイル読み込み
     }
     reader.readAsArrayBuffer(file);
 }
-var mpsData = [[],[],[],[]];
+var mps = {
+    x:0,y:0,arr:[]
+};
 function getMpsInfo(dv){//ウディタのマップ情報読取
     if(dv.getUint32(0)!=0||dv.getUint8(9)!=0||dv.getUint32(10)!=0x574F4C46||dv.getUint8(14)!=0x4D){
         wolfT.value="ウディタのマップとして読み込めませんでした…";
         return;
     }
     var start = dv.getUint32(0x19,true);//謎の可変長データ。0x19~0x1Cはたぶんサイズ。
-    var mpsSizeX = dv.getUint32(0x21+start,true);
-    var mpsSizeY = dv.getUint32(0x25+start,true);
-    mpsData[0] = [mpsSizeX,mpsSizeY];
-    var mps = mpsSizeX * mpsSizeY;
+    mps.x = dv.getUint32(0x21+start,true);
+    mps.y = dv.getUint32(0x25+start,true);
     start += 0x2D;//マップデータの始まり
-    var mpsChip;
-    for(var layor = 0; layor < 3; layor++){
-        for(var i = 0; i < mps; i++){
-            mpsChip = dv.getUint32((i+layor*mps)*4+start,true) < 100000 ? dv.getUint32((i+layor*mps)*4+start,true)+1 : ".";
-            mpsData[layor+1][i] = mpsChip;
+    var chip,x,y,layor,n,arx=[],ary=[],arl=[];
+    arx.length = mps.x;
+    ary.length = mps.y;
+    arl.length = 3;
+    for(layor = 0; layor < 3; layor++){
+        for(y = 0; y < mps.y; y++){
+            for(x = 0; x < mps.x; x++){
+                n = (x*mps.y + y + layor*mps.x*mps.y) * 4 + start;
+                chip = dv.getUint32(n,true) < 100000 ? dv.getUint32(n,true)+1 : ".";
+                arx[x] = chip;
+            }
+            ary[y] = arx.concat();
         }
+        arl[layor] = ary.concat();
     }
+    mps.arr=arl;
     wolfT.value="「読込」をクリックすると\n指定したレイヤーのマップを\nカエルはカエる'用に変換します。\n(オートタイルは空欄として扱われます。)";
 }
 function mps2txt(){
     var index = wolfL.value > 3 ? 3 : wolfL.value;
-    var arr = mpsData[index].concat();arr.push("終");
+    var arr = mps.arr[index-1].concat().flat(Infinity);arr.push("終");
     var chr = arr[0];
     var cnt=0,txt="";
     for(var i = 0; i < arr.length; i++){
@@ -699,7 +708,7 @@ function mps2txt(){
             cnt += 1;
         }
     }
-    wolfT.value = "#set\nウテ゛ィタマッフ゜|"+mpsData[0][0]+"|"+mpsData[0][1]+"||3|1|0|0\n#map\n"
+    wolfT.value = "#set\nウテ゛ィタマッフ゜|"+mps.x+"|"+mps.y+"||3|1|0|0\n#map\n"
     +txt+"\n#chip\n\n#event\n\n#replay";
 }
 //ファビコン設定
