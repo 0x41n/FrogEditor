@@ -2,14 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
-    <title>カエルエディタ</title><script>const version="231222b"</script>
+    <title>カエルエディタ</title>
+    <script>const version="231224a";</script>
     <meta name="description" content="frog editor">
     <link rel="icon" id="fav" href="">
 </head>
 <body onContextmenu="return false;">
     <div id="zentai" style="display:flex;width:100vw;height:calc(100vh - 30px);">
     <div id="mapEditor">
-        <div id="hogehoge">0:0 - 0</div>
+        <div id="hogehoge">0:0-0</div>
         <div id="mapgrid">マップ表示のエラー</div>
         <div id="mappallet">　デフォパレット表示のエラー</div>
         <div id="mapExpallet" style="width:100%;overflow:auto;">　ステージ固有チップが読み込まれていません</div>
@@ -101,47 +102,47 @@ input,textarea,select{
 
 <script>
 //ここからマウス関係
-var mouseFlag = 0,btn;
+var mouseFlag=0,btn;
 mapEditor.addEventListener('mousedown',mouseDown,false);
 zentai.addEventListener('mouseup',mouseUp,false);
 function mouseDown(){//マウスボタンが押されている(ドラッグ)
-    if(mouseFlag == 0){
-        btn = event.button;
-        mouseFlag = 1;
+    if(mouseFlag==0){
+        btn=event.button;
+        mouseFlag=1;
     }
 }
 function mouseUp(){//マウスボタンが押されていない
-    if(mouseFlag == 1 && event.button == btn){
-        mouseFlag = 0;
-        if(btn == 2){//スポイト
-            nowChip = map2dArray[nowY][nowX] === undefined ? "." : map2dArray[nowY][nowX];
-            nowHtml = nowTd.innerHTML;
+    if(mouseFlag==1&&event.button==btn){
+        mouseFlag=0;
+        if(btn==2){//スポイト
+            nowChip=map2dArray[nowY][nowX]===undefined?".":map2dArray[nowY][nowX];
+            nowHtml=nowTd.innerHTML;
         }
     }
 }
 var nowX,nowY,nowTd,nowChip=".",nowHtml="";
 function mouseMove(td){//マウスが動いた
-    nowX = parseInt(td.cellIndex);
-    nowY = parseInt(td.parentNode.rowIndex);
-    nowTd = td;
-    hogehoge.innerHTML = mapInfo.sizeX*mapInfo.sizeY > 6989 ? "マップサイズが大きすぎます！" : nowX + ":" + nowY + " - " + parseInt(nowX + mapInfo.sizeX*nowY);
-    if(mouseFlag == 1){
-        if(btn == 0){
-            td.innerHTML = nowHtml;
-            map2dArray[nowY][nowX] = nowChip;
+    nowX=parseInt(td.cellIndex);
+    nowY=parseInt(td.parentNode.rowIndex);
+    nowTd=td;
+    hogehoge.innerHTML=mapInfo.sizeX*mapInfo.sizeY>6989?"マップサイズが大きすぎます！":nowX+":"+nowY+"-"+parseInt(nowX+mapInfo.sizeX*nowY);
+    if(mouseFlag==1){
+        if(btn==0){
+            td.innerHTML=nowHtml;
+            map2dArray[nowY][nowX]=nowChip;
         }
     }
 }
 function mouseClick(table){//クリック時動作
-    nowTd.innerHTML = nowHtml;
-    map2dArray[nowY][nowX] = nowChip;
+    nowTd.innerHTML=nowHtml;
+    map2dArray[nowY][nowX]=nowChip;
 }
 
 //ここから画像処理系
-const TileSize = 16;
-const PrintSize = TileSize * 2;
+const TileSize=16;
+const PrintSize=TileSize*2;
 var exChips=[],backImgEd,backSize;
-var defChips = {//画像データ
+var defChips={//画像データ
     start:'data:image/png;base64,'+
     "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUuKRdmZlSjo4/MzLBBPF8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEhoZ4AAAABXRSTlP/////APu2DlMAAABUSURBVHicNY7RCQAxCEMVOoByi1iygB/uP9MlHicSHg1PajN2dqdRhhKUZxnBcVMvnTvnhzBnshQ8AGorZK6VQIaA1Q3pgk9nJfA9c6iHbTS/MIwXxuAPl2ju0t4AAAAASUVORK5CYII=",
     block:'data:image/png;base64,'+
@@ -173,64 +174,64 @@ var defChips = {//画像データ
     invisible:'data:image/png;base64,'+
     "R0lGODlhEAAQAPcAAC4pF2ZmVKOjj8zMsEE8XwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJFAAEACwAAAAAEAAQAAADJwgzoOxtNUKrterquvZmnjaF2EBa3UmBKjGqWZuqLAy0rik/EuQPCQAh+QQJFAAEACwAAAAAEAAQAAADJzgAo+xtNUKrterquvZmnjaFGEBa3UmBKjGqWZuqLDy0rik/EuQDCQA7"
 }
-for(var i = 0; i < Object.keys(defChips).length; i++){
-    defChips[Object.keys(defChips)[i]] = "<img src='" + Object.values(defChips)[i] + "'width='" + PrintSize + "''height='" + PrintSize + "'style='image-rendering: pixelated;'>";
+for(var i=0;i<Object.keys(defChips).length;i++){
+    defChips[Object.keys(defChips)[i]]=`<img src='${Object.values(defChips)[i]}'width='${PrintSize}'height='${PrintSize}'style='image-rendering:pixelated;'>`;
 }
 function setImg(ev,mode){//画像読込処理
-    var reader = new FileReader();
-    var file = ev.files[0];
-    reader.onload = function(){
-        if(mode == 0){
-            exChips = [];
-            var element = new Image();
-            element.onload = function(){
-                var d = element.naturalWidth / TileSize;
-                d *= element.naturalHeight / TileSize;
-                for(var i = 1; i <= d; i++){
+    var reader=new FileReader();
+    var file=ev.files[0];
+    reader.onload=function(){
+        if(mode==0){
+            exChips=[];
+            var element=new Image();
+            element.onload=function(){
+                var d=element.naturalWidth/TileSize;
+                d*=element.naturalHeight/TileSize;
+                for(var i=1;i<=d;i++){
                     divImg(reader.result,i);
                 }
             }
-            element.src = reader.result;
+            element.src=reader.result;
         }else{
-            backImgEd = reader.result
-            mapGridTable.style.backgroundImage = "url("+ backImgEd +")";
-            mapGridTable.style.imageRendering = "pixelated";
-            mapGridTable.style.backgroundRepeat = "repeat";
-            var element = new Image();
-            element.onload = function(){
-                backSize = element.naturalWidth * 2 + "px " + element.naturalHeight * 2 + "px";
-                mapGridTable.style.backgroundSize = backSize;
+            backImgEd=reader.result
+            mapGridTable.style.backgroundImage=`url(${backImgEd})`;
+            mapGridTable.style.imageRendering="pixelated";
+            mapGridTable.style.backgroundRepeat="repeat";
+            var element=new Image();
+            element.onload=function(){
+                backSize=`${element.naturalWidth*2}px ${element.naturalHeight*2}px`;
+                mapGridTable.style.backgroundSize=backSize;
             }
-            element.src = reader.result;
+            element.src=reader.result;
         }
     }
     reader.readAsDataURL(file);
 }
 function divImg(img,pattern){//画像分割(パターンはウディタ準拠)
-    var pic = new Image();
-    pic.src = img;
-    var canvas = document.createElement("canvas");
-    var context = canvas.getContext("2d");
-    canvas.width = TileSize;
-    canvas.height = TileSize;
-    pic.onload = function(){
-        var divX = pic.naturalWidth / TileSize;
-        var divY = pic.naturalHeight / TileSize;
-        var sttX = TileSize * ((pattern - 1) % divX);
-        var sttY = TileSize * (Math.floor((pattern - 1) / divX));
+    var pic=new Image();
+    pic.src=img;
+    var canvas=document.createElement("canvas");
+    var context=canvas.getContext("2d");
+    canvas.width=TileSize;
+    canvas.height=TileSize;
+    pic.onload=function(){
+        var divX=pic.naturalWidth/TileSize;
+        var divY=pic.naturalHeight/TileSize;
+        var sttX=TileSize*((pattern-1) % divX);
+        var sttY=TileSize*(Math.floor((pattern-1)/divX));
         context.drawImage(pic,sttX,sttY,TileSize,TileSize,0,0,TileSize,TileSize);
-        var url = canvas.toDataURL("image/png");
-        var result = "<img src='" + url + "'" +
-        "width='" + PrintSize + "'height='" + PrintSize +
+        var url=canvas.toDataURL("image/png");
+        var result="<img src='"+url+"'" +
+        `width='${PrintSize}'height='${PrintSize}`+
         "'style='image-rendering: pixelated;'>";
-        exChips[pattern] = result;
+        exChips[pattern]=result;
         mapGrid();
         mapExPallet();
     };
 }
 
 //ここからマップ関係
-var mapInfo = {
+var mapInfo={
     name:"",
     sizeX:15,
     sizeY:9,
@@ -244,12 +245,12 @@ var mapInfo = {
     events:[],
     layor:0
 };
-mapInfo.mapArrayData.length = mapInfo.sizeX*mapInfo.sizeY;
+mapInfo.mapArrayData.length=mapInfo.sizeX*mapInfo.sizeY;
 mapInfo.mapArrayData.fill(".");
-var map2dArray = splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
+var map2dArray=splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
 function nameFix(str){//文字列の整形(脳筋)
-    str = str.toUpperCase();
-    const list = [
+    str=str.toUpperCase();
+    const list=[
         ["が","か゛"],["ぎ","き゛"],["ぐ","く゛"],["げ","け゛"],["ご","こ゛"],
         ["ざ","さ゛"],["じ","し゛"],["ず","す゛"],["ぜ","せ゛"],["ぞ","そ゛"],
         ["だ","た゛"],["ぢ","ち゛"],["づ","つ゛"],["で","て゛"],["ど","と゛"],
@@ -268,81 +269,81 @@ function nameFix(str){//文字列の整形(脳筋)
         ["！","!"],["？","?"],["（","("],["）",")"],["％","%"],["＝","="],["＠","@"],
         ["~","～"],["　"," "]
     ];
-    for(var i = 0; i < list.length; i++){
-        str = str.replaceAll(list[i][0],list[i][1]);
+    for(var i=0;i<list.length;i++){
+        str=str.replaceAll(list[i][0],list[i][1]);
     }
     return str.replace(/#/g,"");
 }
 function map2txt(){//テキストデータとして書き出す
-    var txt = "#set\n"+nameFix(mapInfo.name)+"|"+mapInfo.sizeX+"|"+mapInfo.sizeY+"|"+mapInfo.chipImg+"|"+mapInfo.backImg+"|"+mapInfo.scrType+"|"+mapInfo.backType+"|"+mapInfo.layor+"|"+mapInfo.shobo
-    + "\n#map\n";
-    mapInfo.mapArrayData = map2dArray.flat(Infinity);
-    var chr = mapInfo.mapArrayData[0];
-    var cnt = 1;
-    for(var i = 0; i < mapInfo.sizeX*mapInfo.sizeY; i++){
+    var txt=`#set\n${nameFix(mapInfo.name)}|${mapInfo.sizeX}|${mapInfo.sizeY}|${mapInfo.chipImg}|${mapInfo.backImg}|${mapInfo.scrType}|${mapInfo.backType}|${mapInfo.layor}|${mapInfo.shobo}`
+   +"\n#map\n";
+    mapInfo.mapArrayData=map2dArray.flat(Infinity);
+    var chr=mapInfo.mapArrayData[0];
+    var cnt=1;
+    for(var i=0;i<mapInfo.sizeX*mapInfo.sizeY;i++){
         if(chr!=mapInfo.mapArrayData[i+1]){
-            txt += cnt == 1 ? chr + "|" : chr + "[" + cnt + "]";
-            chr = mapInfo.mapArrayData[i+1];
-            cnt = 1;
+            txt+=cnt==1?chr+"|":`${chr}[${cnt}]`;
+            chr=mapInfo.mapArrayData[i+1];
+            cnt=1;
         }else{
-            cnt += 1;
+            cnt+=1;
         }
     }
-    txt += "\n#chip\n" +mapInfo.chipType.join("|")+ "\n#event\n";
-    var s = "";
-    mapInfo.events.forEach((t,i)=>{s+=t[0]+parseInt(i+1)+":"+t[1]+"|";});
-    stageData.value = txt +s+"\n#replay";
+    txt+=`\n#chip\n${mapInfo.chipType.join("|")}\n#event\n`;
+    var s="";
+    mapInfo.events.forEach((t,i)=>{s+=`${t[0]}${parseInt(i+1)}:${t[1]}|`;});
+    stageData.value=txt +s+"\n#replay";
 }
 function txtLong(str){//テキストを展開する
-    str += "終";
-    var txt = "";
-    var chp = "";
+    str+="終";
+    var txt="";
+    var chp="";
     var rp,pipe,bracket,c;
     while(str != "終"){
-        pipe = str.indexOf("|") >= 0 ? str.indexOf("|") : 99999;
-        bracket = str.indexOf("[") >= 0 ? str.indexOf("[") : 99999;
-        if(pipe < bracket){
-            chp = str.substr(0,pipe)
-            c = pipe;
-            rp = 1;
+        pipe=str.indexOf("|")>=0?str.indexOf("|"):99999;
+        bracket=str.indexOf("[")>=0?str.indexOf("["):99999;
+        if(pipe<bracket){
+            chp=str.substr(0,pipe)
+            c=pipe;
+            rp=1;
         }else{
-            chp = str.substr(0,bracket);
-            c = str.indexOf("]");
-            rp = parseInt(str.substr(bracket+1,c-1));
+            chp=str.substr(0,bracket);
+            c=str.indexOf("]");
+            rp=parseInt(str.substr(bracket+1,c-1));
         }
-        str = str.substr(c+1);
-        chp += "|";
-        txt += chp.repeat(rp);
+        str=str.substr(c+1);
+        chp+="|";
+        txt+=chp.repeat(rp);
     }
     return txt.slice(0,-1);
 }
 function txt2map(){//テキストデータを読み込む
-    var str = stageData.value.replace(/\n/g,"");
-    mapInfo.name = str.slice(str.indexOf("#set")+4,str.indexOf("|"));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.sizeX = parseInt(str.slice(0,str.indexOf("|")));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.sizeY = parseInt(str.slice(0,str.indexOf("|")));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.chipImg = str.slice(0,str.indexOf("|"));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.backImg = str.slice(0,str.indexOf("|"));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.scrType = parseInt(str.slice(0,str.indexOf("|")));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.backType = parseInt(str.slice(0,str.indexOf("|")));
-    str = str.substr(str.indexOf("|")+1);
-    mapInfo.layor = str.slice(0,str.indexOf("|"));
-    mapInfo.shobo = str.slice(str.indexOf("|")+1,str.indexOf("#map"));
+    var str=stageData.value.replace(/\n/g,"");
+    mapInfo.name=str.slice(str.indexOf("#set")+4,str.indexOf("|"));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.sizeX=parseInt(str.slice(0,str.indexOf("|")));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.sizeY=parseInt(str.slice(0,str.indexOf("|")));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.chipImg=str.slice(0,str.indexOf("|"));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.backImg=str.slice(0,str.indexOf("|"));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.scrType=parseInt(str.slice(0,str.indexOf("|")));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.backType=parseInt(str.slice(0,str.indexOf("|")));
+    str=str.substr(str.indexOf("|")+1);
+    mapInfo.layor=str.slice(0,str.indexOf("|"));
+    mapInfo.shobo=str.slice(str.indexOf("|")+1,str.indexOf("#map"));
 
-    mapInfo.mapArrayData.length = mapInfo.sizeX * mapInfo.sizeY;
-    mapInfo.mapArrayData = txtLong(str.slice(str.indexOf("#map")+4,str.indexOf("#chip"))).split("|");
-    map2dArray = splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
+    mapInfo.mapArrayData.length=mapInfo.sizeX*mapInfo.sizeY;
+    mapInfo.mapArrayData=txtLong(str.slice(str.indexOf("#map")+4,str.indexOf("#chip"))).split("|");
+    map2dArray=splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
     
-    mapInfo.chipType = str.slice(str.indexOf("#chip")+5,str.indexOf("#event")).split("|");
-    mapInfo.events = str.indexOf("|#replay")==-1?[]:str.slice(str.indexOf("#event")+6,str.indexOf("|#replay")).split("|");
+    mapInfo.chipType=str.slice(str.indexOf("#chip")+5,str.indexOf("#event")).split("|");
+    mapInfo.events=str.indexOf("|#replay")==-1?[]:str.slice(str.indexOf("#event")+6,str.indexOf("|#replay")).split("|");
     mapInfo.events.forEach((t,i)=>{mapInfo.events[i]=t.split(":");mapInfo.events[i][0]=mapInfo.events[i][0].replace(/[0-9]/g,'');});
-    mapEventSize = mapInfo.events.length;
+    mapEventSize=mapInfo.events.length;
     infoBoard(0);
     mapGrid();
     chipBoardUpdate();
@@ -350,73 +351,73 @@ function txt2map(){//テキストデータを読み込む
 }
 
 function mapGrid(){//マップグリッド表示
-    var str = "<table id='mapGridTable' border='1' style='width:"+parseInt(PrintSize*mapInfo.sizeX)+"px' onclick='mouseClick(this)'>";
-    for(var i = 0; i < mapInfo.sizeY; i++){
-        str += "<tr>";
-        for(var j = 0; j < mapInfo.sizeX; j++){
-            str += "<td style='width:"+PrintSize+"px;height:"+PrintSize+"px;' onmouseMove='mouseMove(this)'>"+mapImg(j,i)+"</td>";
+    var str=`<table id='mapGridTable' border='1' style='width:${parseInt(PrintSize*mapInfo.sizeX)}px' onclick='mouseClick(this)'>`;
+    for(var i=0;i<mapInfo.sizeY;i++){
+        str+="<tr>";
+        for(var j=0;j<mapInfo.sizeX;j++){
+            str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' onmouseMove='mouseMove(this)'>${mapImg(j,i)}</td>`;
         }
-        str += "</tr>";
+        str+="</tr>";
     }
     str +="</table>";
-    mapgrid.innerHTML = str;
-    mapgrid.style.height = mapInfo.sizeY > 11 ? PrintSize*12 + "px" : "";
-    mapGridTable.style.backgroundImage = "url("+ backImgEd +")";
-    mapGridTable.style.backgroundSize = backSize;
-    mapGridTable.style.imageRendering = "pixelated";
+    mapgrid.innerHTML=str;
+    mapgrid.style.height=mapInfo.sizeY>11?PrintSize*12+"px":"";
+    mapGridTable.style.backgroundImage=`url(${backImgEd})`;
+    mapGridTable.style.backgroundSize=backSize;
+    mapGridTable.style.imageRendering="pixelated";
 }
 function mapImg(x,y){//マップセル表示更新
-    var chip = map2dArray[y][x];
-    if(String(chip).slice(0,1) == "E"){
+    var chip=map2dArray[y][x];
+    if(String(chip).slice(0,1)=="E"){
         return ChipSymbol[mapInfo.events[parseInt(chip.slice(1)-1)][0]];
     }else{
-        var p = ChipSymbol[chip] === undefined ? "" : ChipSymbol[chip];
-        return parseInt(chip) > 0 ? exChips[chip] : p;
+        var p=ChipSymbol[chip]===undefined?"":ChipSymbol[chip];
+        return parseInt(chip)>0?exChips[chip]:p;
     }
 }
 function setNowChip(td,mode){//現在チップ更新
-    if(mode == 2){
-        nowChip = "E"+parseInt(td.cellIndex+1);
-        nowHtml = ChipSymbol[mapInfo.events[td.cellIndex][0]];
+    if(mode==2){
+        nowChip="E"+parseInt(td.cellIndex+1);
+        nowHtml=ChipSymbol[mapInfo.events[td.cellIndex][0]];
     }else{
-        nowChip = mode == 0 ? Object.keys(ChipSymbol)[td.cellIndex] : td.cellIndex+1;
-        var p = ChipSymbol[nowChip] === undefined ? "" : ChipSymbol[nowChip];
-        nowHtml = parseInt(nowChip) > 0 && p == "" ? exChips[nowChip] : p;
+        nowChip=mode==0?Object.keys(ChipSymbol)[td.cellIndex]:td.cellIndex+1;
+        var p=ChipSymbol[nowChip]===undefined?"":ChipSymbol[nowChip];
+        nowHtml=parseInt(nowChip)>0 && p==""?exChips[nowChip]:p;
     }
     
 }
 function splitArray(arr,x){//配列二次元化？
-    var tmp = [];
-    for(var i = 0; i < arr.length; i+=x){
+    var tmp=[];
+    for(var i=0;i<arr.length;i+=x){
         tmp.push(arr.slice(i, i+x));
     }
     return tmp;
 }
 function resizeArray(){//マップリサイズ対応？
-    if(map2dArray[0].length < mapInfo.sizeX){
-        var tmpX = [];
-        tmpX.length = mapInfo.sizeX - map2dArray[0].length;
+    if(map2dArray[0].length<mapInfo.sizeX){
+        var tmpX=[];
+        tmpX.length=mapInfo.sizeX-map2dArray[0].length;
         tmpX.fill(".");
-        for(var i = 0; i < mapInfo.sizeY; i++){
-            map2dArray[i] = map2dArray[i].concat(tmpX);
+        for(var i=0;i<mapInfo.sizeY;i++){
+            map2dArray[i]=map2dArray[i].concat(tmpX);
         }
-    }else if(map2dArray[0].length > mapInfo.sizeX){
-        for(var i = 0; i < mapInfo.sizeY; i++){
-            map2dArray[i].length = mapInfo.sizeX;
+    }else if(map2dArray[0].length>mapInfo.sizeX){
+        for(var i=0;i<mapInfo.sizeY;i++){
+            map2dArray[i].length=mapInfo.sizeX;
         }
     }
-    if(map2dArray.length < mapInfo.sizeY){
-        var tmpY = [];
-        tmpY.length = mapInfo.sizeX;
+    if(map2dArray.length<mapInfo.sizeY){
+        var tmpY=[];
+        tmpY.length=mapInfo.sizeX;
         tmpY.fill(".");
-        for(var i = 0; i < parseInt(mapInfo.sizeY - map2dArray.length);){
+        for(var i=0;i<parseInt(mapInfo.sizeY-map2dArray.length);){
             map2dArray.push(tmpY);
         }
-    }else if(map2dArray.length > mapInfo.sizeY){
-        map2dArray.length = mapInfo.sizeY;
+    }else if(map2dArray.length>mapInfo.sizeY){
+        map2dArray.length=mapInfo.sizeY;
     }
 }
-const ChipSymbol = {//文字と画像の対応
+const ChipSymbol={//文字と画像の対応
     ".":"",
     "$":defChips.start,
     "&":defChips.goal,
@@ -434,7 +435,7 @@ const ChipSymbol = {//文字と画像の対応
     "c":defChips.liftx,
     "d":defChips.lifty
 };
-const ChipTitle = {//各文字の説明
+const ChipTitle={//各文字の説明
     ".":"空欄",
     "$":"スタート地点",
     "&":"ゴール！",
@@ -448,100 +449,100 @@ const ChipTitle = {//各文字の説明
     "~":"ベロポイント",
     "?":"みえないブロック"
 };
-const EventHelp = {
+const EventHelp={
     "a":"表示する文字列を入力",
     "b":"移動先ステージファイルを相対パスで指定",
     "c":"移動量[マス]を半角数字で入力",
     "d":"移動量[マス]を半角数字で入力"
 };
-const ChipEventIndex = 12;
+const ChipEventIndex=12;
 function mapPallet(){//マップパレット表示
     //デフォチップ表示
-    var str = "<br>ステージ共通チップ<br><table id='mapPalletTable' border='1' style='width:"+parseInt(PrintSize*ChipEventIndex)+"px'><tr>";
-    for(var i = 0; i < ChipEventIndex; i++){
-        str += "<td style='width:"+PrintSize+"px;height:"+PrintSize+"px;' title='"+ChipTitle[Object.keys(ChipSymbol)[i]]+"' onclick='setNowChip(this,0)'>"+Object.values(ChipSymbol)[i]+"</td>";
+    var str=`<br>ステージ共通チップ<br><table id='mapPalletTable' border='1' style='width:${parseInt(PrintSize*ChipEventIndex)}px'><tr>`;
+    for(var i=0;i<ChipEventIndex;i++){
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='${ChipTitle[Object.keys(ChipSymbol)[i]]}' onclick='setNowChip(this,0)'>${Object.values(ChipSymbol)[i]}</td>`;
     }
-    str += "</tr></table>";
-    str += "ステージ固有チップ <input type='file' accept='image/*' style='width:20em;' onchange='setImg(this,0)'> "+
+    str+="</tr></table>";
+    str+="ステージ固有チップ <input type='file' accept='image/*' style='width:20em;' onchange='setImg(this,0)'> "+
             "背景画像 <input type='file' accept='image/*' style='width:20em;' onchange='setImg(this,1)'>";
-    mappallet.innerHTML = str;
+    mappallet.innerHTML=str;
 }
 function mapExPallet(){//追加マップチップ対応？
-    str = "<table border='1' style='width:"+parseInt(PrintSize*exChips.length)+"px;'><tr>";
-    for(var i = 1; i < exChips.length; i++){
-        str += "<td style='width:"+PrintSize+"px;height:"+PrintSize+"px;' title='"+i+"' onclick='setNowChip(this,1)'>"+exChips[i]+"</td>";
+    str=`<table border='1' style='width:${parseInt(PrintSize*exChips.length)}px;'><tr>`;
+    for(var i=1;i<exChips.length;i++){
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='${i}' onclick='setNowChip(this,1)'>${exChips[i]}</td>`;
     }
-    str += "</tr><tr>"+chipBoard()+"</tr></table>";
-    mapExpallet.innerHTML = str;
+    str+=`</tr><tr>"${chipBoard()}</tr></table>`;
+    mapExpallet.innerHTML=str;
     chipBoardUpdate();
 }
 function chipBoard(){//チップタイプ表示
-    var txt = "";
-    mapInfo.chipType.length = exChips.length;
-    for(var i = 1; i < exChips.length; i++){
-        txt += "<td><select id='chipType"+i+"' onchange='chipTypeUpdate(this,"+i+")'>"+chipTypeSelect + "</td>";
+    var txt="";
+    mapInfo.chipType.length=exChips.length;
+    for(var i=1;i<exChips.length;i++){
+        txt+=`<td><select id='chipType${i}' onchange='chipTypeUpdate(this,${i})'>${chipTypeSelect}</td>`;
     }
     return txt;
 }
 function chipBoardUpdate(){//チップタイプ表示更新
-    for(var i = 1; i < exChips.length; i++){
-        if(mapInfo.chipType[i-1] === undefined){
-            mapInfo.chipType[i-1] = 0;
+    for(var i=1;i<exChips.length;i++){
+        if(mapInfo.chipType[i-1]===undefined){
+            mapInfo.chipType[i-1]=0;
         }
-        document.getElementById("chipType"+i).value = mapInfo.chipType[i-1];
+        document.getElementById("chipType"+i).value=mapInfo.chipType[i-1];
     }
 }
 function chipTypeUpdate(td,num){//チップタイプ配列更新
-    mapInfo.chipType[num-1] = document.getElementById("chipType"+num).value;
+    mapInfo.chipType[num-1]=document.getElementById("chipType"+num).value;
 }
 
-var mapEventSize = 0;
+var mapEventSize=0;
 function addMapEvent(){//イベント追加
-    mapEventSize += 1;
+    mapEventSize+=1;
     mapInfo.events.push(["a",""]);
     mapEventInfo();
 }
 function removeMapEvent(){//イベント削除
-    mapInfo.mapArrayData = map2dArray.flat(Infinity);
+    mapInfo.mapArrayData=map2dArray.flat(Infinity);
     mapInfo.mapArrayData.forEach((t,i)=>{mapInfo.mapArrayData[i]=t=="E"+mapEventSize?".":t;});
-    map2dArray = splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
-    mapEventSize -= mapEventSize<1 ? 0 : 1;
-    mapInfo.events.length = mapEventSize;
+    map2dArray=splitArray(mapInfo.mapArrayData,mapInfo.sizeX);
+    mapEventSize-=mapEventSize<1?0:1;
+    mapInfo.events.length=mapEventSize;
     mapEventInfo();
 }
 function mapEventInfo(){//イベント情報表示
-    var str = "";
-    for(var i = 0; i < mapEventSize; i++){
-        str += parseInt(i+1)+"コめ<br><select id='eventSelect"+i+"' onchange='mapEventInfoUpdate()'>"+eventTypeSelect+"<br>"+
-            "<input type='text' id='eventValue"+i+"' placeholder='' onchange='eventUpdate()'><br>";
+    var str="";
+    for(var i=0;i<mapEventSize;i++){
+        str+=parseInt(i+1)+`コめ<br><select id='eventSelect${i}' onchange='mapEventInfoUpdate()'>${eventTypeSelect}<br>`+
+            `<input type='text' id='eventValue${i}' placeholder='' onchange='eventUpdate()'><br>`;
     }
-    ib1.innerHTML = str + eventInfo;
-    for(var i = 0; i < mapInfo.events.length; i++){
-        document.getElementById("eventSelect"+i).value = mapInfo.events[i][0];
-        document.getElementById("eventValue"+i).value = mapInfo.events[i][1];
-        document.getElementById("eventValue"+i).placeholder = EventHelp[mapInfo.events[i][0]];
+    ib1.innerHTML=str+eventInfo;
+    for(var i=0;i<mapInfo.events.length;i++){
+        document.getElementById("eventSelect"+i).value=mapInfo.events[i][0];
+        document.getElementById("eventValue"+i).value=mapInfo.events[i][1];
+        document.getElementById("eventValue"+i).placeholder=EventHelp[mapInfo.events[i][0]];
     }
     eventPallet();
 }
 function mapEventInfoUpdate(){//イベント情報更新
-    for(var i = 0; i < mapInfo.events.length; i++){
-        mapInfo.events[i][0] = document.getElementById("eventSelect"+i).value;
-        document.getElementById("eventValue"+i).placeholder = EventHelp[mapInfo.events[i][0]];
+    for(var i=0;i<mapInfo.events.length;i++){
+        mapInfo.events[i][0]=document.getElementById("eventSelect"+i).value;
+        document.getElementById("eventValue"+i).placeholder=EventHelp[mapInfo.events[i][0]];
     }
     eventPallet();
 }
 function eventUpdate(){//イベント値更新
-    for(var i = 0; i < mapInfo.events.length; i++){
-        var s = document.getElementById("eventValue"+i).value;
-        mapInfo.events[i][1] = mapInfo.events[i][0]=="a"?nameFix(s):s;
+    for(var i=0;i<mapInfo.events.length;i++){
+        var s=document.getElementById("eventValue"+i).value;
+        mapInfo.events[i][1]=mapInfo.events[i][0]=="a"?nameFix(s):s;
     }
 }
 function eventPallet(){//イベントパレット表示
-    str = "<table border='1' style='width:"+parseInt(PrintSize*mapEventSize)+"px;'><tr>";
-    for(var i = 0; i < mapEventSize; i++){
-        str += "<td style='width:"+PrintSize+"px;height:"+PrintSize+"px;' title='イベント"+parseInt(i+1)+"コめ' onclick='setNowChip(this,2)'>"+ChipSymbol[mapInfo.events[i][0]]+"</td>";
+    str=`<table border='1' style='width:${parseInt(PrintSize*mapEventSize)}px;'><tr>`;
+    for(var i=0;i<mapEventSize;i++){
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='イベント${parseInt(i+1)}コめ' onclick='setNowChip(this,2)'>${ChipSymbol[mapInfo.events[i][0]]}</td>`;
     }
-    mapEvpallet.innerHTML = mapEventSize>0 ? str+"</table>" : "　イベントがありません";
+    mapEvpallet.innerHTML=mapEventSize>0?str+"</table>":"　イベントがありません";
     mapGrid();
 }
 
@@ -564,10 +565,10 @@ function infoBoard(td){//右側表示切替
         stageLayor.value=mapInfo.layor;
         map2txt();
     }
-    ib1.style.height = window.innerHeight - ib0.offsetHeight - 30 + "px";
+    ib1.style.height=window.innerHeight-ib0.offsetHeight-30+"px";
 }
 
-const helpInfo = "<b>～つかいかた～</b>"+
+const helpInfo="<b>～つかいかた～</b>"+
 "<ul><li>最初に「ステージ固有チップ」に画像を読み込む</li><li>チップをクリックすると描画チップが変わる</li><li>「生成」をクリックすると「ステージデータ」にデータがテキストとして出力される</li><li>コピーしてテキストファイルとして保存する</li><li>読み込むときは、「ステージデータ」にテキストを張り付けて「読込」をクリック</li><li>ステージ上では左クリックで描画、右クリックでスポイト</li></ul>"+
 "<b>～カエルはカエる'簡単な仕様～</b><br>"+
 "<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
@@ -579,29 +580,29 @@ const helpInfo = "<b>～つかいかた～</b>"+
 "読み込むレイヤー <input type='number' id='wolfL' min='1' max='3' step='1' value='1' onchange='setrange(1)' style='width:3em'> "+
 "<input type='button' onclick='mps2txt()' value='読込' style='width:3em;'><br>"+
 "<textarea id='wolfT' style='height:7em'></textarea>"+
-version + "-0x41n";
-const scrollTypeSelect = "<select id='stageScr'>"+
+version+"-0x41n";
+const scrollTypeSelect="<select id='stageScr'>"+
 "<option value='0'>固定</option><option value='1'>横スクロール</option><option value='2'>縦スクロール</option><option value='3'>縦横スクロール</option><option value='4'>右強制スクロール</option><option value='6'>右強制＋縦スクロール</option><option value='8'>上強制スクロール(未実装)</option><option value='9'>上強制＋横スクロール(未実装)</option>"+
 "</select>";
-const backScrollTypeSelect = "<select id='stageBackScr'>"+
+const backScrollTypeSelect="<select id='stageBackScr'>"+
 "<option value='-5'>1フレームごとに5px</option><option value='-4'>1フレームごとに4px</option><option value='-3'>1フレームごとに3px</option><option value='-2'>1フレームごとに2px</option><option value='-1'>1フレームごとに1px</option>"+
 "<option value='0'>動かない</option><option value='1'>カメラ1pxにつき1px</option><option value='2'>カメラ2pxにつき1px</option><option value='3'>カメラ3pxにつき1px</option><option value='4'>カメラ4pxにつき1px</option><option value='5'>カメラ5pxにつき1px</option></select>";
-const chipTypeSelect = "<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option><option value='4'>4:坂(／)</option><option value='5'>5:坂(＼)</option>"+
+const chipTypeSelect="<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option><option value='4'>4:坂(／)</option><option value='5'>5:坂(＼)</option>"+
 "</select>";
-const stageInfo = "タイトル<br><input type='text' id='stageName' placeholder='英数/かな/カナ で入力'><br>"+
+const stageInfo="タイトル<br><input type='text' id='stageName' placeholder='英数/かな/カナ で入力'><br>"+
 "ステージ横マス<br><input type='number' id='stageSizeX' step='1' min='10' onchange='setrange(10)'><br>"+
 "ステージ縦マス<br><input type='number' id='stageSizeY' step='1' min='9' onchange='setrange(9)'><br>"+
 "チップ画像<br><input type='text' id='stageChip' placeholder='相対パスで指定'><br>"+
 "背景画像<br><input type='text' id='stageBack' placeholder='相対パスで指定'><br>"+
-"スクロール<br>"+scrollTypeSelect+"<br>"+
-"背景スクロール速度(横のみ)<br>"+backScrollTypeSelect+"<br>"+
-"主人公レイヤー<br><select id='stageLayor'><option value='0'>マップの後ろに表示</option><option value='1'>マップの前に表示</option></select><br>"+
+`スクロール<br>${scrollTypeSelect}<br>`+
+`背景スクロール速度(横のみ)<br>${backScrollTypeSelect}<br>`+
+"主人公表示<br><select id='stageLayor'><option value='0'>マップの後ろに表示</option><option value='1'>マップの前に表示</option></select><br>"+
 "shobo<br><input type='text' id='stageOgc' placeholder='相対パスで指定 or 半角数字でID指定 (-1でBGM継続)'><br>"+
 "ステージデータ<table><tr><td onclick='map2txt()'>生成</td><td onclick='txt2map()'>読込</td></tr></table>"+
 "<textarea id='stageData' style='height:7em'></textarea>";
-const eventInfo = "※イベントの入れすぎに注意！"+
+const eventInfo="※イベントの入れすぎに注意！"+
 "<table><tr><td onclick='addMapEvent()'>追加</td><td onclick='removeMapEvent()'>削除</td></tr></table>";
-const eventTypeSelect = "<option value='a'>テキスト表示</option><option value='b'>ドア</option><option value='c'>横リフト</option><option value='d'>縦リフト</option>"+
+const eventTypeSelect="<option value='a'>テキスト表示</option><option value='b'>ドア</option><option value='c'>横リフト</option><option value='d'>縦リフト</option>"+
 "</select>";
 
 function stageInfoUpdate(){//ステージ情報の更新
@@ -618,16 +619,12 @@ function stageInfoUpdate(){//ステージ情報の更新
     mapGrid();
 }
 function setrange(min){//数値入力の形を整える
-    var e = event.target;
-    if(e.value < min){
-        e.value = min;
-    }else{
-        e.value = Math.floor(e.value);
-    }
+    var e=event.target;
+    e.value=e.value<min?min:Math.floor(e.value);
 }
 infoBoard(0);
 window.addEventListener("resize", function(event) {//ウィンドウリサイズ対応？
-    ib1.style.height = window.innerHeight - ib0.offsetHeight - 30 + "px";
+    ib1.style.height=window.innerHeight-ib0.offsetHeight-30+"px";
 });
 
 mapPallet();
@@ -636,35 +633,35 @@ eventPallet();
 
 //以下おまけツール
 function txtShort(){//マップを短くするやつ
-    var str = chottoShort.value.replace(/\n/g,"") + "終";
-    str = str.replace(/S/g,"$").replace(/G/g,"&").replace(/P/g,"+").replace(/D/g,"*").replace(/B/g,"=").replace(/K/g,"^").replace(/Q/g,"~");
-    var chr = str.slice(0,1);
+    var str=chottoShort.value.replace(/\n/g,"")+"終";
+    str=str.replace(/S/g,"$").replace(/G/g,"&").replace(/P/g,"+").replace(/D/g,"*").replace(/B/g,"=").replace(/K/g,"^").replace(/Q/g,"~");
+    var chr=str.slice(0,1);
     var cnt=0,txt="",coin=1;
-    for(var i = 0; i < str.length; i++){
+    for(var i=0;i<str.length;i++){
         if(chr!=str.slice(i,i+1)){
-            if(chr == "I"){
-                chr = "@" + coin;
-                coin += 1;    
+            if(chr=="I"){
+                chr="@"+coin;
+                coin+=1;
             }
-            txt += cnt == 1 ? chr + "|" : chr + "[" + cnt + "]";
-            chr = str.slice(i,i+1);
-            cnt = 1;
+            txt+=cnt==1?chr+"|":chr+"["+cnt+"]";
+            chr=str.slice(i,i+1);
+            cnt=1;
         }else{
-            cnt += 1;
+            cnt+=1;
         }
     }
-    chottoShort.value = txt;
+    chottoShort.value=txt;
 }
 function filein(ev){//バイナリファイル読み込み
-    var reader = new FileReader();
-    var file = ev.files[0];
-    reader.onload = function(){
-        var dataview = new DataView(reader.result);
+    var reader=new FileReader();
+    var file=ev.files[0];
+    reader.onload=function(){
+        var dataview=new DataView(reader.result);
         getMpsInfo(dataview);
     }
     reader.readAsArrayBuffer(file);
 }
-var mps = {
+var mps={
     x:0,y:0,arr:[]
 };
 function getMpsInfo(dv){//ウディタのマップ情報読取
@@ -672,49 +669,50 @@ function getMpsInfo(dv){//ウディタのマップ情報読取
         wolfT.value="ウディタのマップとして読み込めませんでした…";
         return;
     }
-    var start = dv.getUint32(0x19,true);//謎の可変長データ。0x19~0x1Cはたぶんサイズ。
-    mps.x = dv.getUint32(0x21+start,true);
-    mps.y = dv.getUint32(0x25+start,true);
-    start += 0x2D;//マップデータの始まり
+    wolfT.value="読込中のエラー！\nもしかして空のマップ…？";
+    var start=dv.getUint32(0x19,true);//謎の可変長データ。0x19~0x1Cはたぶんサイズ。
+    mps.x=dv.getUint32(0x21+start,true);
+    mps.y=dv.getUint32(0x25+start,true);
+    start+=0x2D;//マップデータの始まり
     var chip,x,y,layor,n,arx=[],ary=[],arl=[];
-    arx.length = mps.x;
-    ary.length = mps.y;
-    arl.length = 3;
-    for(layor = 0; layor < 3; layor++){
-        for(y = 0; y < mps.y; y++){
-            for(x = 0; x < mps.x; x++){
-                n = (x*mps.y + y + layor*mps.x*mps.y) * 4 + start;
-                chip = dv.getUint32(n,true) < 100000 ? dv.getUint32(n,true)+1 : ".";
-                arx[x] = chip;
+    arx.length=mps.x;
+    ary.length=mps.y;
+    arl.length=3;
+    for(layor=0;layor<3;layor++){
+        for(y=0;y<mps.y;y++){
+            for(x=0;x<mps.x;x++){
+                n=(x*mps.y+y+layor*mps.x*mps.y)*4+start;
+                chip=dv.getUint32(n,true)<100000?dv.getUint32(n,true)+1:".";
+                arx[x]=chip;
             }
-            ary[y] = arx.concat();
+            ary[y]=arx.concat();
         }
-        arl[layor] = ary.concat();
+        arl[layor]=ary.concat();
     }
     mps.arr=arl;
     wolfT.value="「読込」をクリックすると\n指定したレイヤーのマップを\nカエルはカエる'用に変換します。\n(オートタイルは空欄として扱われます。)";
 }
-function mps2txt(){
-    var index = wolfL.value > 3 ? 3 : wolfL.value;
-    var arr = mps.arr[index-1].concat().flat(Infinity);arr.push("終");
-    var chr = arr[0];
+function mps2txt(){//ウディタ形式をテキスト変換
+    var index=wolfL.value>3?3:wolfL.value;
+    var arr=mps.arr[index-1].concat().flat(Infinity);arr.push("終");
+    var chr=arr[0];
     var cnt=0,txt="";
-    for(var i = 0; i < arr.length; i++){
+    for(var i=0;i<arr.length;i++){
         if(chr!=arr[i]){
-            txt += cnt == 1 ? chr + "|" : chr + "[" + cnt + "]";
-            chr = arr[i];
-            cnt = 1;
+            txt+=cnt==1?chr+"|":chr+"["+cnt+"]";
+            chr=arr[i];
+            cnt=1;
         }else{
-            cnt += 1;
+            cnt+=1;
         }
     }
-    wolfT.value = "#set\nウテ゛ィタマッフ゜|"+mps.x+"|"+mps.y+"||3|1|0|0\n#map\n"
+    wolfT.value=`#set\nウテ゛ィタマッフ゜|${mps.x}|${mps.y}||3|1|0|0\n#map\n`
     +txt+"\n#chip\n\n#event\n\n#replay";
 }
 //ファビコン設定
-const Favicon = "data:image/png;base64,"+
+const Favicon="data:image/png;base64,"+
 "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAMFBMVEUuKRdmZlSjo4/MzLBBPF8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACEhoZ4AAAABXRSTlP/////APu2DlMAAAERSURBVHic7dixDcMwDARAr5BZvIL3nylVGgIEKcSBKeS+pvhXCjyuIkeS2+YBAAAAAAAAxgI+D88kWVE1DwAAAAAAALAvIBa9klRAAAAAAAAAgPmAWHAmqQAxAAAAAAAAAPMBsfhXiRAAAAAAAACA/wNECAAAAAAAAMDzgG+LVw8YAAAAAAAAAPsCsqJuYl/8CAEAAAAAAAA8B1g9UMTF1XxWDAAAAAAAADAP0IVEQBcEAAAAAAAAsD+gKq4gAAAAAAAAAPMBWfFdgAwCAAAAAAAAsA+gC6neAwAAAAAAAMwHdCGrifsBAAAAAAAA5gC6hXFBleV9AAAAAAAAAI8Bsg9JzLWY7j4AAAAAAACAxwFvDGTx0xdFeQ8AAAAASUVORK5CYII=";
-fav.type = "image/png";
-fav.href = Favicon;
+fav.type="image/png";
+fav.href=Favicon;
 </script>
 </html>
