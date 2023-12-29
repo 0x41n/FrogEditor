@@ -3,29 +3,29 @@
 <head>
     <meta charset="utf-8">
     <title>カエルエディタ</title>
-    <script>const version="231224a";</script>
-    <meta name="description" content="frog editor">
-    <link rel="icon" id="fav" href="">
+    <script>const version="231229a";</script>
+    <meta name="description"content="frog editor">
+    <link rel="icon"id="fav"href="">
 </head>
 <body onContextmenu="return false;">
-    <div id="zentai" style="display:flex;width:100vw;height:calc(100vh - 30px);">
+    <div id="zentai"style="display:flex;width:100vw;height:calc(100vh - 30px);">
     <div id="mapEditor">
-        <div id="hogehoge">0:0-0</div>
+        <div><div id="nowhoge"style="width:32px;height:32px;float:left;border:1px solid #666654"></div><div id="hogehoge"style="padding:4px 3em;height:32px;">0:0-0</div></div>
         <div id="mapgrid">マップ表示のエラー</div>
         <div id="mappallet">　デフォパレット表示のエラー</div>
-        <div id="mapExpallet" style="width:100%;overflow:auto;">　ステージ固有チップが読み込まれていません</div>
+        <div id="mapExpallet"style="width:100%;overflow:auto;">　ステージ固有チップが読み込まれていません</div>
         イベント
-        <div id="mapEvpallet" style="width:100%;overflow:auto;">　イベントパレット表示のエラー</div>
+        <div id="mapEvpallet"style="width:100%;overflow:auto;">　イベントパレット表示のエラー</div>
     </div>
     <div id="info">
-    <div id="ib0" style="padding:0 15px;">
+    <div id="ib0"style="padding:0 15px;">
     カエルはカエる'用　ステージエディタ<br>
     <table><tr>
         <td onclick="infoBoard(this)">ステージ</td>
         <td onclick="infoBoard(this)">イベント</td>
         <td onclick="infoBoard(this)">ヘルプ？</td>
     </tr></table><br></div>
-    <div id="ib1" style="overflow-x:hidden;padding:0 15px 15px 15px;" onchange="stageInfoUpdate()"></div>
+    <div id="ib1"style="overflow-x:hidden;padding:0 15px 15px 15px;"onchange="stageInfoUpdate()"></div>
     </div>
     </div>
 </body>
@@ -53,9 +53,14 @@ body{
     overflow-x:hidden;
 }
 #mapEditor table{
-    border:#2E2917;
     border-collapse:collapse;
     table-layout:fixed;
+}
+#mapEditor td{
+    border:solid 1px #666654;
+    border-spacing:0px;
+    overflow:hidden;
+    padding:0;
 }
 #mapEditor table td:hover{
     background-color:#FFFFFF;
@@ -86,6 +91,7 @@ body{
 }
 #info table td:hover{
     background-color:#D0D0D0;
+    cursor:pointer;
 }
 img{
     -webkit-user-drag:none;
@@ -117,6 +123,7 @@ function mouseUp(){//マウスボタンが押されていない
         if(btn==2){//スポイト
             nowChip=map2dArray[nowY][nowX]===undefined?".":map2dArray[nowY][nowX];
             nowHtml=nowTd.innerHTML;
+            nowhoge.innerHTML=nowHtml;
         }
     }
 }
@@ -221,9 +228,8 @@ function divImg(img,pattern){//画像分割(パターンはウディタ準拠)
         var sttY=TileSize*(Math.floor((pattern-1)/divX));
         context.drawImage(pic,sttX,sttY,TileSize,TileSize,0,0,TileSize,TileSize);
         var url=canvas.toDataURL("image/png");
-        var result="<img src='"+url+"'" +
-        `width='${PrintSize}'height='${PrintSize}`+
-        "'style='image-rendering: pixelated;'>";
+        var result="<img src='"+url+"'"+
+        `width='${PrintSize}'height='${PrintSize}'style='image-rendering:pixelated;'>`;
         exChips[pattern]=result;
         mapGrid();
         mapExPallet();
@@ -292,7 +298,7 @@ function map2txt(){//テキストデータとして書き出す
     txt+=`\n#chip\n${mapInfo.chipType.join("|")}\n#event\n`;
     var s="";
     mapInfo.events.forEach((t,i)=>{s+=`${t[0]}${parseInt(i+1)}:${t[1]}|`;});
-    stageData.value=txt +s+"\n#replay";
+    stageData.value=txt+s+"\n#replay";
 }
 function txtLong(str){//テキストを展開する
     str+="終";
@@ -351,15 +357,15 @@ function txt2map(){//テキストデータを読み込む
 }
 
 function mapGrid(){//マップグリッド表示
-    var str=`<table id='mapGridTable' border='1' style='width:${parseInt(PrintSize*mapInfo.sizeX)}px' onclick='mouseClick(this)'>`;
+    var str=`<table id='mapGridTable'style='width:${parseInt(PrintSize*mapInfo.sizeX)}px;'onclick='mouseClick(this)'cellspaceing='0px'>`;
     for(var i=0;i<mapInfo.sizeY;i++){
         str+="<tr>";
         for(var j=0;j<mapInfo.sizeX;j++){
-            str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' onmouseMove='mouseMove(this)'>${mapImg(j,i)}</td>`;
+            str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;'onmouseMove='mouseMove(this)'>${mapImg(j,i)}</td>`;
         }
         str+="</tr>";
     }
-    str +="</table>";
+    str+="</table>";
     mapgrid.innerHTML=str;
     mapgrid.style.height=mapInfo.sizeY>11?PrintSize*12+"px":"";
     mapGridTable.style.backgroundImage=`url(${backImgEd})`;
@@ -382,9 +388,9 @@ function setNowChip(td,mode){//現在チップ更新
     }else{
         nowChip=mode==0?Object.keys(ChipSymbol)[td.cellIndex]:td.cellIndex+1;
         var p=ChipSymbol[nowChip]===undefined?"":ChipSymbol[nowChip];
-        nowHtml=parseInt(nowChip)>0 && p==""?exChips[nowChip]:p;
+        nowHtml=parseInt(nowChip)>0&&p==""?exChips[nowChip]:p;
     }
-    
+    nowhoge.innerHTML=nowHtml;
 }
 function splitArray(arr,x){//配列二次元化？
     var tmp=[];
@@ -458,21 +464,21 @@ const EventHelp={
 const ChipEventIndex=12;
 function mapPallet(){//マップパレット表示
     //デフォチップ表示
-    var str=`<br>ステージ共通チップ<br><table id='mapPalletTable' border='1' style='width:${parseInt(PrintSize*ChipEventIndex)}px'><tr>`;
+    var str=`<br>ステージ共通チップ<br><table id='mapPalletTable'style='width:${parseInt(PrintSize*ChipEventIndex)}px'cellspaceing='0px'><tr>`;
     for(var i=0;i<ChipEventIndex;i++){
-        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='${ChipTitle[Object.keys(ChipSymbol)[i]]}' onclick='setNowChip(this,0)'>${Object.values(ChipSymbol)[i]}</td>`;
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;'title='${ChipTitle[Object.keys(ChipSymbol)[i]]}'onclick='setNowChip(this,0)'>${Object.values(ChipSymbol)[i]}</td>`;
     }
     str+="</tr></table>";
-    str+="ステージ固有チップ <input type='file' accept='image/*' style='width:20em;' onchange='setImg(this,0)'> "+
-            "背景画像 <input type='file' accept='image/*' style='width:20em;' onchange='setImg(this,1)'>";
+    str+="ステージ固有チップ <input type='file'accept='image/*'style='width:20em;'onchange='setImg(this,0)'> "+
+            "背景画像 <input type='file'accept='image/*'style='width:20em;'onchange='setImg(this,1)'>";
     mappallet.innerHTML=str;
 }
 function mapExPallet(){//追加マップチップ対応？
-    str=`<table border='1' style='width:${parseInt(PrintSize*exChips.length)}px;'><tr>`;
+    str=`<table style='width:${parseInt(PrintSize*exChips.length)}px;'><tr>`;
     for(var i=1;i<exChips.length;i++){
-        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='${i}' onclick='setNowChip(this,1)'>${exChips[i]}</td>`;
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;'title='${i}'onclick='setNowChip(this,1)'>${exChips[i]}</td>`;
     }
-    str+=`</tr><tr>"${chipBoard()}</tr></table>`;
+    str+=`</tr><tr>${chipBoard()}</tr></table>`;
     mapExpallet.innerHTML=str;
     chipBoardUpdate();
 }
@@ -480,7 +486,7 @@ function chipBoard(){//チップタイプ表示
     var txt="";
     mapInfo.chipType.length=exChips.length;
     for(var i=1;i<exChips.length;i++){
-        txt+=`<td><select id='chipType${i}' onchange='chipTypeUpdate(this,${i})'>${chipTypeSelect}</td>`;
+        txt+=`<td><select id='chipType${i}'onchange='chipTypeUpdate(this,${i})'>${chipTypeSelect}</td>`;
     }
     return txt;
 }
@@ -513,8 +519,8 @@ function removeMapEvent(){//イベント削除
 function mapEventInfo(){//イベント情報表示
     var str="";
     for(var i=0;i<mapEventSize;i++){
-        str+=parseInt(i+1)+`コめ<br><select id='eventSelect${i}' onchange='mapEventInfoUpdate()'>${eventTypeSelect}<br>`+
-            `<input type='text' id='eventValue${i}' placeholder='' onchange='eventUpdate()'><br>`;
+        str+=parseInt(i+1)+`コめ<br><select id='eventSelect${i}'onchange='mapEventInfoUpdate()'>${eventTypeSelect}<br>`+
+            `<input type='text'id='eventValue${i}'placeholder=''onchange='eventUpdate()'><br>`;
     }
     ib1.innerHTML=str+eventInfo;
     for(var i=0;i<mapInfo.events.length;i++){
@@ -538,9 +544,9 @@ function eventUpdate(){//イベント値更新
     }
 }
 function eventPallet(){//イベントパレット表示
-    str=`<table border='1' style='width:${parseInt(PrintSize*mapEventSize)}px;'><tr>`;
+    str=`<table border='1'style='width:${parseInt(PrintSize*mapEventSize)}px;'><tr>`;
     for(var i=0;i<mapEventSize;i++){
-        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;' title='イベント${parseInt(i+1)}コめ' onclick='setNowChip(this,2)'>${ChipSymbol[mapInfo.events[i][0]]}</td>`;
+        str+=`<td style='width:${PrintSize}px;height:${PrintSize}px;'title='${mapInfo.events[i][1]}'onclick='setNowChip(this,2)'>${ChipSymbol[mapInfo.events[i][0]]}</td>`;
     }
     mapEvpallet.innerHTML=mapEventSize>0?str+"</table>":"　イベントがありません";
     mapGrid();
@@ -571,15 +577,15 @@ function infoBoard(td){//右側表示切替
 const helpInfo="<b>～つかいかた～</b>"+
 "<ul><li>最初に「ステージ固有チップ」に画像を読み込む</li><li>チップをクリックすると描画チップが変わる</li><li>「生成」をクリックすると「ステージデータ」にデータがテキストとして出力される</li><li>コピーしてテキストファイルとして保存する</li><li>読み込むときは、「ステージデータ」にテキストを張り付けて「読込」をクリック</li><li>ステージ上では左クリックで描画、右クリックでスポイト</li></ul>"+
 "<b>～カエルはカエる'簡単な仕様～</b><br>"+
-"<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
+"<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>画面の大きさは横10マス、縦9マス</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
 "<b>～このエディタの仕様～</b><ul><li>Chrome前提だから他の環境で動くかわからない</li><li>「Undo」「Redo」的なものは一切ない</li><li>背景画像とチップ画像は「ステージ」欄での指定とは別に読み込む必要がある</li><li>ステージに対応するチップを読み込まないと「undefined」で埋め尽くされる(読み込むとなおる)</li><li>画像は"+TileSize+"px毎に分割される</li><li>表示が変なのは技術不足</li></ul>"+
 "<b>～できるだけ不具合を回避したい！～</b><ul><li>なによりも最初に「ステージ固有チップ」に画像を読み込む</li><li>触れて起動するイベントは最低１マス間をあける</li></ul>"+
-"<b>～ちょっとしたツール～</b><br>無印→ダッシュ変換 (#map部のみ！) <input type='button' onclick='txtShort()' style='width:3em;' value='変換'><br>"+
-"<textarea id='chottoShort' style='height:7em'></textarea><br><br>"+
-"ウディタマップ読込 (.mps形式)<br><input type='file' onchange='filein(this)'><br>"+
-"読み込むレイヤー <input type='number' id='wolfL' min='1' max='3' step='1' value='1' onchange='setrange(1)' style='width:3em'> "+
-"<input type='button' onclick='mps2txt()' value='読込' style='width:3em;'><br>"+
-"<textarea id='wolfT' style='height:7em'></textarea>"+
+"<b>～ちょっとしたツール～</b><br>無印→ダッシュ変換 (#map部のみ！) <input type='button'onclick='txtShort()'style='width:3em;'value='変換'><br>"+
+"<textarea id='chottoShort'style='height:7em'></textarea><br><br>"+
+"ウディタマップ読込 (.mps形式)<br><input type='file'onchange='filein(this)'><br>"+
+"読み込むレイヤー <input type='number'id='wolfL'min='1'max='3'step='1'value='1'onchange='setrange(1)'style='width:3em'> "+
+"<input type='button'onclick='mps2txt()'value='読込'style='width:3em;'><br>"+
+"<textarea id='wolfT'style='height:7em'></textarea>"+
 version+"-0x41n";
 const scrollTypeSelect="<select id='stageScr'>"+
 "<option value='0'>固定</option><option value='1'>横スクロール</option><option value='2'>縦スクロール</option><option value='3'>縦横スクロール</option><option value='4'>右強制スクロール</option><option value='6'>右強制＋縦スクロール</option><option value='8'>上強制スクロール(未実装)</option><option value='9'>上強制＋横スクロール(未実装)</option>"+
@@ -589,17 +595,17 @@ const backScrollTypeSelect="<select id='stageBackScr'>"+
 "<option value='0'>動かない</option><option value='1'>カメラ1pxにつき1px</option><option value='2'>カメラ2pxにつき1px</option><option value='3'>カメラ3pxにつき1px</option><option value='4'>カメラ4pxにつき1px</option><option value='5'>カメラ5pxにつき1px</option></select>";
 const chipTypeSelect="<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option><option value='4'>4:坂(／)</option><option value='5'>5:坂(＼)</option>"+
 "</select>";
-const stageInfo="タイトル<br><input type='text' id='stageName' placeholder='英数/かな/カナ で入力'><br>"+
-"ステージ横マス<br><input type='number' id='stageSizeX' step='1' min='10' onchange='setrange(10)'><br>"+
-"ステージ縦マス<br><input type='number' id='stageSizeY' step='1' min='9' onchange='setrange(9)'><br>"+
-"チップ画像<br><input type='text' id='stageChip' placeholder='相対パスで指定'><br>"+
-"背景画像<br><input type='text' id='stageBack' placeholder='相対パスで指定'><br>"+
+const stageInfo="タイトル<br><input type='text'id='stageName'placeholder='英数/かな/カナ で入力'><br>"+
+"ステージ横マス<br><input type='number'id='stageSizeX'step='1'min='10'onchange='setrange(10)'><br>"+
+"ステージ縦マス<br><input type='number'id='stageSizeY'step='1'min='9'onchange='setrange(9)'><br>"+
+"チップ画像<br><input type='text'id='stageChip'placeholder='相対パスで指定'><br>"+
+"背景画像<br><input type='text'id='stageBack'placeholder='相対パスで指定'><br>"+
 `スクロール<br>${scrollTypeSelect}<br>`+
 `背景スクロール速度(横のみ)<br>${backScrollTypeSelect}<br>`+
 "主人公表示<br><select id='stageLayor'><option value='0'>マップの後ろに表示</option><option value='1'>マップの前に表示</option></select><br>"+
-"shobo<br><input type='text' id='stageOgc' placeholder='相対パスで指定 or 半角数字でID指定 (-1でBGM継続)'><br>"+
+"shobo<br><input type='text'id='stageOgc'placeholder='相対パスで指定 or 半角数字でID指定 (-1でBGM継続)'><br>"+
 "ステージデータ<table><tr><td onclick='map2txt()'>生成</td><td onclick='txt2map()'>読込</td></tr></table>"+
-"<textarea id='stageData' style='height:7em'></textarea>";
+"<textarea id='stageData'style='height:7em'></textarea>";
 const eventInfo="※イベントの入れすぎに注意！"+
 "<table><tr><td onclick='addMapEvent()'>追加</td><td onclick='removeMapEvent()'>削除</td></tr></table>";
 const eventTypeSelect="<option value='a'>テキスト表示</option><option value='b'>ドア</option><option value='c'>横リフト</option><option value='d'>縦リフト</option>"+
