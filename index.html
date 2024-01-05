@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head prefix="og: http://ogp.me/ns#">
+<head>
     <meta charset="utf-8">
     <title>カエルエディタ</title>
-    <script>const version="240102a";</script>
-    <meta name="description"content="カエルはカエる'用ステージエディタ">
+    <script>const version="240105a";</script>
+    <meta name="description"content="frog editor">
     <link rel="icon"id="fav"href="">
-    <meta name="twitter:card"content="summary"/>
-    <meta name="twitter:site"content="@0x41n"/>
-    <meta property="og:title"content="カエルエディタ"/>
-    <meta property="og:type"content="website"/>
 </head>
 <body onContextmenu="return false;">
     <div id="zentai"style="display:flex;width:100vw;height:calc(100vh - 30px);">
@@ -587,7 +583,7 @@ function infoBoard(td){//右側表示切替
 const helpInfo="<b>～つかいかた～</b>"+
 "<ul><li>最初に「ステージ固有チップ」に画像を読み込む</li><li>チップをクリックすると描画チップが変わる</li><li>「生成」をクリックすると「ステージデータ」にデータがテキストとして出力される</li><li>コピーしてテキストファイルとして保存する</li><li>読み込むときは、「ステージデータ」にテキストを張り付けて「読込」をクリック</li><li>ステージ上では左クリックで描画、右クリックでスポイト</li></ul>"+
 "<b>～カエルはカエる'簡単な仕様～</b><br>"+
-"<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>画面の大きさは横10マス、縦9マス</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
+"<ul><li>飛び越えられる高さ：２マス (ダッシュ時３マス)</li><li>ベロジャンプの高さ：ぐるぐるから２マス (最大３マスだがほぼムリ)</li><li>画面の大きさは横12マス、縦9マス</li><li>背景は縦にスクロールしない</li><li>コインは各種１枚まで</li><li>ステージにカギがあると勝手にゴールが閉まる</li><li>ステージは6900マスくらいが限界</li><li>スタート地点とゴールは２つ以上あると後にあるもので上書きされる</li><li>想定外なステージの動作は未保障</li><li>カエルはカエる無印との互換性は無い</li><li>背景画像の欄に半角数字で0～3の数字を入れると単色の背景になる</li></ul>"+
 "<b>～このエディタの仕様～</b><ul><li>Chrome前提だから他の環境で動くかわからない</li><li>「Undo」「Redo」的なものは一切ない</li><li>背景画像とチップ画像は「ステージ」欄での指定とは別に読み込む必要がある</li><li>ステージに対応するチップを読み込まないと「undefined」で埋め尽くされる(読み込むとなおる)</li><li>画像は"+TileSize+"px毎に分割される</li><li>表示が変なのは技術不足</li></ul>"+
 "<b>～できるだけ不具合を回避したい！～</b><ul><li>なによりも最初に「ステージ固有チップ」に画像を読み込む</li><li>触れて起動するイベントは最低１マス間をあける</li></ul>"+
 "<b>～ちょっとしたツール～</b><br>無印→ダッシュ変換 (#map部のみ！) <input type='button'onclick='txtShort()'style='width:3em;'value='変換'><br>"+
@@ -606,7 +602,7 @@ const backScrollTypeSelect="<select id='stageBackScr'>"+
 const chipTypeSelect="<option value='0'>0:当たり判定あり</option><option value='1'>1:当たり判定なし</option><option value='2'>2:すり抜け床</option><option value='3'>3:降りれないすり抜け床</option><option value='4'>4:坂(／)</option><option value='5'>5:坂(＼)</option>"+
 "</select>";
 const stageInfo="タイトル<br><input type='text'id='stageName'placeholder='英数/かな/カナ で入力'><br>"+
-"ステージ横マス<br><input type='number'id='stageSizeX'step='1'min='10'onchange='setrange(10)'><br>"+
+"ステージ横マス<br><input type='number'id='stageSizeX'step='1'min='12'onchange='setrange(12)'><br>"+
 "ステージ縦マス<br><input type='number'id='stageSizeY'step='1'min='9'onchange='setrange(9)'><br>"+
 "チップ画像<br><input type='text'id='stageChip'placeholder='相対パスで指定'><br>"+
 "背景画像<br><input type='text'id='stageBack'placeholder='相対パスで指定'><br>"+
