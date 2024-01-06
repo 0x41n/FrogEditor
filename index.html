@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>カエルエディタ</title>
-    <script>const version="240106b";</script>
+    <script>const version="240106a";</script>
     <meta name="description"content="frog editor">
     <link rel="icon"id="fav"href="">
 </head>
@@ -377,7 +377,6 @@ function mapGrid(){//マップグリッド表示
     mapGridTable.style.backgroundImage=`url(${backImgEd})`;
     mapGridTable.style.backgroundSize=backSize;
     mapGridTable.style.imageRendering="pixelated";
-    eventPallet();
 }
 function mapImg(x,y){//マップセル表示更新
     var chip=map2dArray[y][x];
